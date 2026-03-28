@@ -92,23 +92,39 @@ const initialData = [
 ];
 
 function LoginScreen({onLogin}){
+  const [showPw,setShowPw]=useState(false);
+  const [pw,setPw]=useState("");
+  const [err,setErr]=useState("");
+  const handleEditClick=()=>{setShowPw(true);setPw("");setErr("");};
+  const handlePwSubmit=()=>{if(pw==="Knowledge@Claude"){onLogin("edit");}else{setErr("Incorrect password. Try again.");}};
   return(
     <div style={{fontFamily:"-apple-system,sans-serif",maxWidth:420,margin:"80px auto",textAlign:"center"}}>
       <div style={{fontSize:"48px",marginBottom:"12px"}}>🔐</div>
       <h2 style={{fontSize:"20px",fontWeight:700,marginBottom:"4px"}}>SAP S/4HANA OTC RACM Suite</h2>
       <p style={{fontSize:"12px",color:"#6B7280",marginBottom:"24px"}}>Select your access level to continue</p>
-      <div style={{display:"flex",gap:"12px",justifyContent:"center"}}>
-        <button onClick={()=>onLogin("edit")} style={{padding:"16px 28px",borderRadius:"10px",border:"2px solid #10B981",background:"#F0FDF4",cursor:"pointer",textAlign:"center",flex:1}}>
+      {!showPw?(<div style={{display:"flex",gap:"12px",justifyContent:"center"}}>
+        <button onClick={handleEditClick} style={{padding:"16px 28px",borderRadius:"10px",border:"2px solid #10B981",background:"#F0FDF4",cursor:"pointer",textAlign:"center",flex:1}}>
           <div style={{fontSize:"24px",marginBottom:"4px"}}>✏️</div>
           <div style={{fontSize:"14px",fontWeight:700,color:"#065F46"}}>Edit Access</div>
-          <div style={{fontSize:"10px",color:"#6B7280",marginTop:"2px"}}>Create, edit, delete controls</div>
+          <div style={{fontSize:"10px",color:"#6B7280",marginTop:"2px"}}>Password protected</div>
         </button>
         <button onClick={()=>onLogin("view")} style={{padding:"16px 28px",borderRadius:"10px",border:"2px solid #3B82F6",background:"#EFF6FF",cursor:"pointer",textAlign:"center",flex:1}}>
           <div style={{fontSize:"24px",marginBottom:"4px"}}>👁️</div>
           <div style={{fontSize:"14px",fontWeight:700,color:"#1E40AF"}}>View Access</div>
           <div style={{fontSize:"10px",color:"#6B7280",marginTop:"2px"}}>Read-only with search & export</div>
         </button>
-      </div>
+      </div>):(
+        <div style={{background:"#F0FDF4",border:"2px solid #10B981",borderRadius:"10px",padding:"20px",maxWidth:"320px",margin:"0 auto"}}>
+          <div style={{fontSize:"20px",marginBottom:"6px"}}>✏️</div>
+          <div style={{fontSize:"14px",fontWeight:700,color:"#065F46",marginBottom:"12px"}}>Edit Access — Enter Password</div>
+          <input type="password" placeholder="Enter password" value={pw} onChange={e=>{setPw(e.target.value);setErr("");}} onKeyDown={e=>{if(e.key==="Enter")handlePwSubmit();}} style={{width:"100%",padding:"8px 12px",borderRadius:"6px",border:err?"2px solid #DC2626":"1px solid #D1D5DB",fontSize:"13px",boxSizing:"border-box",marginBottom:"8px"}}/>
+          {err&&<div style={{color:"#DC2626",fontSize:"11px",marginBottom:"8px"}}>{err}</div>}
+          <div style={{display:"flex",gap:"8px"}}>
+            <button onClick={()=>{setShowPw(false);setErr("");}} style={{flex:1,padding:"8px",borderRadius:"6px",border:"1px solid #D1D5DB",background:"white",fontSize:"12px",cursor:"pointer"}}>Back</button>
+            <button onClick={handlePwSubmit} style={{flex:1,padding:"8px",borderRadius:"6px",border:"none",background:"#10B981",color:"white",fontSize:"12px",cursor:"pointer",fontWeight:600}}>Unlock</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
